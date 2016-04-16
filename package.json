@@ -1,0 +1,21 @@
+{
+  "name": "Full_Moon_2016",
+  "version": "1.0.0",
+  "description": "Gulp setup for Full Moon Festival 2016.",
+  "author": "Celso White <celso@celsowhite.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git"
+  },
+  "devDependencies": {
+    "gulp": "~3.9.1",
+    "gulp-sass": "^2.2.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-cssnano": "^2.1.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-watch": "^4.3.5",
+    "gulp-minify":"^0.0.7",
+    "gulp-imagemin": "^2.4.0",
+    "imagemin-pngquant": "^4.2.2"
+  }
+}
