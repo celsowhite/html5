@@ -3,10 +3,12 @@
 var gulp         = require('gulp');
 var sass         = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
-var cssnano      = require('gulp-cssnano');
+var cssmin       = require('gulp-cssmin');
 var rename       = require('gulp-rename');
 var watch        = require('gulp-watch');
-var minify       = require('gulp-minify');
+var uglify       = require('gulp-uglify');
+var notify       = require('gulp-notify');
+var concat       = require('gulp-concat');
 var imagemin     = require('gulp-imagemin');
 var pngquant     = require('imagemin-pngquant');
 
@@ -15,9 +17,9 @@ var pngquant     = require('imagemin-pngquant');
 gulp.task('styles', function () {
 
     gulp.src('./scss/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
-    .pipe(cssnano())
+    .pipe(sass().on('error', notify.onError("Error: <%= error.message %>")))
+    .pipe(autoprefixer({ browsers: ['last 3 versions'] }))
+    .pipe(cssmin())
     .pipe(rename( {suffix: '.min'} ))
     .pipe(gulp.dest('./css'))
 
@@ -27,11 +29,11 @@ gulp.task('styles', function () {
 
 gulp.task('js-minify', function(){
 
-	gulp.src('./js/main.js')
-	.pipe(minify({ 
-		ext: { min:'.min.js'}
-	}))
-	.pipe(gulp.dest('./js'))
+  gulp.src('./js/custom/*.js')
+  .pipe(concat('scripts.js'))
+  .pipe(uglify().on('error', notify.onError("Error: <%= error.cause %>")))
+  .pipe(rename({suffix: '.min'}))
+  .pipe(gulp.dest('./js'))
 
 });
 
@@ -54,9 +56,9 @@ gulp.task('imageoptimize', function() {
 
 gulp.task('watch', function() {
 
-  	gulp.watch('./scss/**/*.scss', ['styles']);
+    gulp.watch('./scss/**/*.scss', ['styles']);
 
-  	gulp.watch('./js/scripts.js', ['js-minify']);
+    gulp.watch('./js/custom/*.js', ['js-minify']);
 
 });
 
