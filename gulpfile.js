@@ -5,6 +5,7 @@ var sass         = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var cssmin       = require('gulp-cssmin');
 var rename       = require('gulp-rename');
+var babel        = require('gulp-babel');
 var watch        = require('gulp-watch');
 var uglify       = require('gulp-uglify');
 var notify       = require('gulp-notify');
@@ -30,6 +31,7 @@ gulp.task('styles', function () {
 gulp.task('js-minify', function(){
 
   gulp.src('./js/custom/*.js')
+  .pipe(babel({presets: ['es2015']}).on('error', notify.onError("Error: <%= error.message %>")))
   .pipe(concat('scripts.js'))
   .pipe(uglify().on('error', notify.onError("Error: <%= error.cause %>")))
   .pipe(rename({suffix: '.min'}))
