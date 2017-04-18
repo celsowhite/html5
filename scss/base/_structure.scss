@@ -1,0 +1,82 @@
+/*==================================
+GENERAL STRUCTURE
+==================================*/
+
+.container {
+    max-width: 1024px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+/*==================================
+GRID
+==================================*/
+
+.x_row {
+    display: flex;
+    flex-flow: row wrap;
+    width: auto;
+    margin: 0px -7.5px;
+}
+
+.column_1, .column_1_2, .column_1_3, .column_2_3, .column_1_4, .column_3_4 {
+	position: relative;
+	margin: 0px 0px 15px;
+	padding: 0px 7.5px;
+	float: left;
+	display: inline-block;
+
+	img {
+		display: block;
+	}
+}
+
+/*=== Columns ===*/
+
+.column_1 {
+    width: 100%;
+}
+
+.column_1_2 {
+    width: 50%;
+
+    @include mobile_landscape {
+    	width: 100%;
+    }
+}
+
+.column_1_3 {
+    width: 33.33%;
+
+    @include mobile_landscape {
+    	width: 100%;
+    }
+}
+
+.column_2_3 {
+    width: 66.66%;
+
+    @include mobile_landscape {
+    	width: 100%;
+    }
+}
+
+.column_1_4 {
+    width: 25%;
+
+    @include tablet {
+    	width: 50%;
+    }
+
+    @include mobile_landscape {
+    	width: 100%;
+    }
+}
+
+.column_3_4 {
+    width: 75%;
+
+    @include mobile_landscape {
+    	width: 100%;
+    }
+}
