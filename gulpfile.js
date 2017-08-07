@@ -1,4 +1,6 @@
-/*=== Gulp Plugins ===*/
+/*----------------------
+Gulp Plugins
+----------------------*/
 
 var gulp         = require('gulp');
 var sass         = require('gulp-sass');
@@ -13,57 +15,94 @@ var concat       = require('gulp-concat');
 var imagemin     = require('gulp-imagemin');
 var pngquant     = require('imagemin-pngquant');
 
-/*=== Sass -> Prefix -> Minify ===*/
+/*----------------------
+Style Tasks
+----------------------*/
 
-gulp.task('styles', function () {
+// Custom styles written in scss
+// Sass -> Autoprefix -> Minify
 
-    gulp.src('./scss/**/*.scss')
-    .pipe(sass().on('error', notify.onError("Error: <%= error.message %>")))
-    .pipe(autoprefixer({ browsers: ['iOS >= 7','last 2 versions'] }))
-    .pipe(cssmin())
-    .pipe(rename( {suffix: '.min'} ))
-    .pipe(gulp.dest('./css'))
-
+gulp.task('custom_styles', function () {
+  gulp.src('./styles/scss/**/*.scss')
+  .pipe(sass().on('error', notify.onError("Error: <%= error.message %>")))
+  .pipe(autoprefixer({ browsers: ['iOS >= 7','last 2 versions'] }))
+  .pipe(cssmin())
+  .pipe(rename( {suffix: '.min'} ))
+  .pipe(gulp.dest('./styles'))
 });
 
-/*=== Javascript Minify ===*/
+// Plugin styles
+// Concat -> Minify
 
-gulp.task('js-minify', function(){
+gulp.task('plugin_styles', function () {
+  gulp.src('./styles/plugins/**/*.css')
+  .pipe(concat('plugin_styles.css'))
+  .pipe(cssmin())
+  .pipe(rename( {suffix: '.min'} ))
+  .pipe(gulp.dest('./styles'))
+});
 
-  gulp.src('./js/custom/*.js')
+/*----------------------
+Javascript Tasks
+----------------------*/
+
+// Custom scripts
+// Babel -> Concat -> Minify
+
+gulp.task('custom_scripts', function(){
+  gulp.src([
+    './scripts/custom/global.js',
+    './scripts/custom/**/!(global)*.js', // all files that end in .js EXCEPT global*.js
+  ])
   .pipe(babel({presets: ['es2015']}).on('error', notify.onError("Error: <%= error.message %>")))
-  .pipe(concat('scripts.js'))
+  .pipe(concat('custom_scripts.js'))
   .pipe(uglify().on('error', notify.onError("Error: <%= error.cause %>")))
   .pipe(rename({suffix: '.min'}))
-  .pipe(gulp.dest('./js'))
-
+  .pipe(gulp.dest('./scripts'))
 });
 
-/*=== Image Optimization ===*/
+// Plugin Scripts
+// Concat -> Minify
+
+gulp.task('plugin_scripts', function(){
+  gulp.src('./scripts/plugins/**/*.js')
+  .pipe(concat('plugin_scripts.js'))
+  .pipe(uglify())
+  .pipe(rename({suffix: '.min'}))
+  .pipe(gulp.dest('./scripts'))
+});
+
+/*----------------------
+Image Optimization
+----------------------*/
 
 gulp.task('imageoptimize', function() {
 
-    gulp.src('./nonoptimizedimg/**/*')
-    .pipe(imagemin({
-      progressive: true,
-      svgoPlugins: [{removeViewBox: false}],
-      optimizationLevel: 6,
-      use: [pngquant({quality: '65-80', speed: 2})]
-    }))
-    .pipe(gulp.dest('./img'))
+  gulp.src('./nonoptimizedimg/**/*')
+  .pipe(imagemin({
+    progressive: true,
+    svgoPlugins: [{removeViewBox: false}],
+    optimizationLevel: 6,
+    use: [pngquant({quality: '65-80', speed: 2})]
+  }))
+  .pipe(gulp.dest('./img'))
 
 });
 
-/*=== Watch Styles and Scripts ===*/
+/*----------------------
+Watch Tasks
+----------------------*/
 
 gulp.task('watch', function() {
 
-    gulp.watch('./scss/**/*.scss', ['styles']);
+  gulp.watch('./styles/scss/**/*.scss', ['custom_styles']);
 
-    gulp.watch('./js/custom/*.js', ['js-minify']);
+  gulp.watch('./styles/plugins/**/*.css', ['plugin_styles']);
+
+  gulp.watch('./scripts/custom/*.js', ['custom_scripts']);
+
+  gulp.watch('./scripts/plugins/*.js', ['plugin_scripts']);
 
 });
-
-/*=== Default Gulp task run watch ===*/
 
 gulp.task('default', ['watch']);
