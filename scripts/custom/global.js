@@ -6,18 +6,18 @@ DEBOUCE
 // https://davidwalsh.name/javascript-debounce-function
 
 function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
+  var timeout;
+  return function () {
+    var context = this, args = arguments;
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
 };
 
 /*================================= 
@@ -26,7 +26,7 @@ MEDIA QUERIES
 
 // Interactions just for desktop
 
-const mq = window.matchMedia( "(min-width: 1024px)" );
+const mq = window.matchMedia("(min-width: 1024px)");
 
 /*================================= 
 POLYFILLS
@@ -116,7 +116,7 @@ if (!Array.from) {
 
 if (!Array.prototype.includes) {
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function(searchElement, fromIndex) {
+    value: function (searchElement, fromIndex) {
 
       // 1. Let O be ? ToObject(this value).
       if (this == null) {
@@ -167,17 +167,111 @@ if (!Array.prototype.includes) {
 
 // Closest Polyfill for IE
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-		
+
 if (window.Element && !Element.prototype.closest) {
-    Element.prototype.closest = 
-    function(s) {
-        var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-            i,
-            el = this;
-        do {
-            i = matches.length;
-            while (--i >= 0 && matches.item(i) !== el) {};
-        } while ((i < 0) && (el = el.parentElement)); 
-        return el;
+  Element.prototype.closest =
+    function (s) {
+      var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+        i,
+        el = this;
+      do {
+        i = matches.length;
+        while (--i >= 0 && matches.item(i) !== el) { };
+      } while ((i < 0) && (el = el.parentElement));
+      return el;
     };
+}
+
+// Find Polyfill for IE
+// https://tc39.github.io/ecma262/#sec-array.prototype.find
+
+if (!Array.prototype.find) {
+  Object.defineProperty(Array.prototype, 'find', {
+    value: function (predicate) {
+      // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+
+      var o = Object(this);
+
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+
+      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+      if (typeof predicate !== 'function') {
+        throw new TypeError('predicate must be a function');
+      }
+
+      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+      var thisArg = arguments[1];
+
+      // 5. Let k be 0.
+      var k = 0;
+
+      // 6. Repeat, while k < len
+      while (k < len) {
+        // a. Let Pk be ! ToString(k).
+        // b. Let kValue be ? Get(O, Pk).
+        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+        // d. If testResult is true, return kValue.
+        var kValue = o[k];
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return kValue;
+        }
+        // e. Increase k by 1.
+        k++;
+      }
+
+      // 7. Return undefined.
+      return undefined;
+    }
+  });
+}
+
+// Find Index polyfill for IE
+// https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
+
+if (!Array.prototype.findIndex) {
+  Object.defineProperty(Array.prototype, 'findIndex', {
+    value: function (predicate) {
+      // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+
+      var o = Object(this);
+
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+
+      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+      if (typeof predicate !== 'function') {
+        throw new TypeError('predicate must be a function');
+      }
+
+      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+      var thisArg = arguments[1];
+
+      // 5. Let k be 0.
+      var k = 0;
+
+      // 6. Repeat, while k < len
+      while (k < len) {
+        // a. Let Pk be ! ToString(k).
+        // b. Let kValue be ? Get(O, Pk).
+        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+        // d. If testResult is true, return k.
+        var kValue = o[k];
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return k;
+        }
+        // e. Increase k by 1.
+        k++;
+      }
+
+      // 7. Return -1.
+      return -1;
+    }
+  });
 }
